@@ -1,44 +1,64 @@
-AI Study Planner
+# 🧠 CogniPlan AI
 
-Description
+### Adaptive Agentic Learning System
 
--This project is an AI-based study planner that helps students manage their time efficiently. It creates personalized study schedules, adapts based on performance, evaluates answers, and provides a focus mode.
+> **CogniPlan AI is an adaptive learning engine that continuously analyzes learner performance, identifies knowledge gaps, and dynamically adapts future study strategies.**
 
+[![Python](https://img.shields.io/badge/Python-3.11+-blue?logo=python)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-API-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
+[![CI](https://github.com/sanchita25bai11100/CogniPlan-AI/actions/workflows/ci.yml/badge.svg)](https://github.com/sanchita25bai11100/CogniPlan-AI/actions)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
+---
 
-Features
+## 🚀 Overview
 
-- Smart timetable generation based on difficulty
-- Adaptive schedule updates
-- Answer evaluation using keyword matching
-- Focus mode to reduce distractions
+Traditional study planners create schedules.
 
+**CogniPlan learns from the learner.**
 
+Instead of generating a static timetable, CogniPlan models learning as a continuous feedback loop:
 
-AI Concepts Used
-
-- Intelligent Agents
-- Rule-based decision making
-- Basic Natural Language Processing
-
-
-
-Technologies
-
-- Python
-
-
-
-How to Run
-
-```bash
-
-python main.py
-
-Project Structure
-
-- main.py – Main program file
-- planner.py – Study schedule generation logic
-- adaptive.py – Schedule updating logic
-- evaluator.py – Answer evaluation system
-- blocker.py – Focus mode system
+```text
+        ┌─────────────────────┐
+        │   STUDENT STATE     │
+        │                     │
+        │ Mastery             │
+        │ Confidence          │
+        │ Retention Risk      │
+        │ Performance         │
+        └──────────┬──────────┘
+                   │
+                   ▼
+        ┌─────────────────────┐
+        │   PLANNER AGENT     │
+        │                     │
+        │ Prioritize tasks    │
+        └──────────┬──────────┘
+                   │
+                   ▼
+             STUDY SESSION
+                   │
+                   ▼
+        ┌─────────────────────┐
+        │  EVALUATOR AGENT    │
+        │                     │
+        │ Accuracy            │
+        │ Confidence          │
+        │ Efficiency          │
+        └──────────┬──────────┘
+                   │
+                   ▼
+        ┌─────────────────────┐
+        │ ADAPTATION AGENT    │
+        │                     │
+        │ Revision            │
+        │ Practice            │
+        │ Spaced Repetition   │
+        │ Advancement         │
+        └──────────┬──────────┘
+                   │
+                   ▼
+                 REPLAN
+                   │
+                   └───────────────► 🔄
