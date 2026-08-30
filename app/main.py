@@ -1,22 +1,15 @@
 """
-CogniPlan AI API
-================
+CogniPlan AI
+============
 
-FastAPI application exposing the adaptive learning engine.
+Adaptive Agentic Learning System.
 
-Core workflow:
+CogniPlan continuously evaluates student performance
+and adapts future learning recommendations.
 
-Student Data
-     ↓
-Planner Agent
-     ↓
-Study Session
-     ↓
-Evaluator Agent
-     ↓
-Adaptation Agent
-     ↓
-Next Learning Strategy
+Core loop:
+
+PLAN → STUDY → EVALUATE → ADAPT → REPLAN
 """
 
 from datetime import datetime
@@ -25,38 +18,49 @@ from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
 from app.agents.orchestrator import CogniPlanOrchestrator
+from app.services.analytics import LearningAnalytics
+from app.services.knowledge_engine import KnowledgeEngine
+from app.services.tutor import AITutor
 
 
-# ---------------------------------------------------------
+# =========================================================
 # Application
-# ---------------------------------------------------------
+# =========================================================
 
 app = FastAPI(
     title="CogniPlan AI",
     description=(
-        "Adaptive Agentic Learning System powered by "
-        "student intelligence, performance evaluation, "
-        "and closed-loop schedule adaptation."
+        "Adaptive Agentic Learning System that personalizes "
+        "learning using performance signals, knowledge gaps, "
+        "retention risk, and continuous feedback."
     ),
     version="2.0.0",
 )
 
 
-# ---------------------------------------------------------
-# Agent System
-# ---------------------------------------------------------
+# =========================================================
+# Core Intelligence Components
+# =========================================================
 
 orchestrator = CogniPlanOrchestrator()
 
+analytics = LearningAnalytics()
 
-# ---------------------------------------------------------
+knowledge_engine = KnowledgeEngine()
+
+tutor = AITutor(
+    knowledge_engine=knowledge_engine
+)
+
+
+# =========================================================
 # Request Models
-# ---------------------------------------------------------
+# =========================================================
 
 
 class PlanningRequest(BaseModel):
     """
-    Input required to generate a personalized study plan.
+    Request for generating a prioritized study plan.
     """
 
     tasks: list[dict]
@@ -64,51 +68,59 @@ class PlanningRequest(BaseModel):
 
 class SessionRequest(BaseModel):
     """
-    Study-session performance submitted after learning.
+    Performance data from a completed study session.
     """
 
-    questions_attempted: int = Field(
-        gt=0,
-        description="Number of questions attempted.",
-    )
+    questions_attempted: int = Field(gt=0)
 
-    correct_answers: int = Field(
-        ge=0,
-        description="Number of correctly answered questions.",
-    )
+    correct_answers: int = Field(ge=0)
 
     confidence: float = Field(
         ge=0.0,
         le=1.0,
-        description="Student confidence from 0 to 1.",
     )
 
     time_spent_minutes: int = Field(
         ge=0,
-        description="Time spent during the session.",
     )
 
     retention_risk: float = Field(
         ge=0.0,
         le=1.0,
-        description="Estimated retention risk from 0 to 1.",
     )
 
-    current_duration: int = Field(
-        gt=0,
-        description="Current study-session duration.",
+    current_duration: int = Field(gt=0)
+
+
+class TutorRequest(BaseModel):
+    """
+    Request for personalized tutoring.
+    """
+
+    question: str
+
+    mastery: float = Field(
+        ge=0.0,
+        le=1.0,
+        default=0.5,
+    )
+
+    confidence: float = Field(
+        ge=0.0,
+        le=1.0,
+        default=0.5,
     )
 
 
-# ---------------------------------------------------------
-# Basic Routes
-# ---------------------------------------------------------
+# =========================================================
+# System Routes
+# =========================================================
 
 
 @app.get("/")
 def root():
     """
-    System landing endpoint.
+    Return basic system information.
     """
 
     return {
@@ -116,6 +128,9 @@ def root():
         "version": "2.0.0",
         "status": "online",
         "architecture": "adaptive-agentic",
+        "learning_loop": (
+            "PLAN → STUDY → EVALUATE → ADAPT → REPLAN"
+        ),
         "timestamp": datetime.utcnow().isoformat(),
     }
 
@@ -123,7 +138,7 @@ def root():
 @app.get("/health")
 def health():
     """
-    Health-check endpoint.
+    Service health check.
     """
 
     return {
@@ -135,17 +150,21 @@ def health():
 @app.get("/api/v1/system")
 def system_info():
     """
-    Return information about the agent architecture.
+    Describe the system architecture.
     """
 
     return {
         "name": "CogniPlan AI",
         "version": "2.0.0",
         "architecture": "adaptive-agentic",
-        "agents": [
-            "PlannerAgent",
-            "EvaluatorAgent",
-            "AdaptationAgent",
+        "components": [
+            "Student Intelligence Engine",
+            "Adaptive Planning Agent",
+            "Performance Evaluation Agent",
+            "Schedule Adaptation Agent",
+            "Learning Analytics Engine",
+            "Personal Knowledge Engine",
+            "AI Tutor",
         ],
         "learning_loop": [
             "PLAN",
@@ -157,13 +176,15 @@ def system_info():
     }
 
 
-# ---------------------------------------------------------
-# Planning API
-# ---------------------------------------------------------
+# =========================================================
+# Planning
+# =========================================================
 
 
 @app.post("/api/v1/planner/plan")
-def generate_plan(request: PlanningRequest):
+def generate_plan(
+    request: PlanningRequest,
+):
     """
     Generate a prioritized learning plan.
     """
@@ -178,16 +199,17 @@ def generate_plan(request: PlanningRequest):
     }
 
 
-# ---------------------------------------------------------
-# Evaluation + Adaptation API
-# ---------------------------------------------------------
+# =========================================================
+# Session Evaluation
+# =========================================================
 
 
 @app.post("/api/v1/sessions/evaluate")
-def evaluate_session(request: SessionRequest):
+def evaluate_session(
+    request: SessionRequest,
+):
     """
-    Evaluate a completed study session and determine
-    how the next session should be adapted.
+    Evaluate a study session and adapt the next strategy.
     """
 
     result = orchestrator.process_session(
@@ -202,4 +224,62 @@ def evaluate_session(request: SessionRequest):
     return {
         "status": "success",
         "result": result,
+    }
+
+
+# =========================================================
+# Learning Analytics
+# =========================================================
+
+
+@app.post("/api/v1/analytics/insights")
+def learning_insights(
+    mastery: float = 0.5,
+    confidence: float = 0.5,
+    retention_risk: float = 0.5,
+    session_accuracies: list[float] | None = None,
+):
+    """
+    Generate a learner intelligence report.
+    """
+
+    if session_accuracies is None:
+        session_accuracies = []
+
+    insights = analytics.generate_insights(
+        mastery=mastery,
+        confidence=confidence,
+        retention_risk=retention_risk,
+        session_accuracies=session_accuracies,
+    )
+
+    return {
+        "status": "success",
+        "insights": insights,
+    }
+
+
+# =========================================================
+# AI Tutor
+# =========================================================
+
+
+@app.post("/api/v1/tutor/explain")
+def explain_concept(
+    request: TutorRequest,
+):
+    """
+    Generate a personalized, knowledge-grounded
+    tutoring instruction.
+    """
+
+    result = tutor.explain(
+        question=request.question,
+        mastery=request.mastery,
+        confidence=request.confidence,
+    )
+
+    return {
+        "status": "success",
+        "tutor_response": result,
     }
