@@ -278,7 +278,82 @@ def explain_concept(
         mastery=request.mastery,
         confidence=request.confidence,
     )
+# =========================================================
+# End-to-End Demo
+# =========================================================
 
+
+@app.get("/api/v1/demo")
+def run_demo():
+    """
+    Run a complete CogniPlan learning cycle using
+    representative learner data.
+
+    This endpoint demonstrates how the system combines
+    evaluation, analytics, and adaptation.
+    """
+
+    questions_attempted = 20
+    correct_answers = 13
+    confidence = 0.62
+    time_spent_minutes = 30
+    retention_risk = 0.48
+    current_duration = 45
+
+    # -----------------------------------------------------
+    # Evaluate the session
+    # -----------------------------------------------------
+
+    evaluation = orchestrator.process_session(
+        questions_attempted=questions_attempted,
+        correct_answers=correct_answers,
+        confidence=confidence,
+        time_spent_minutes=time_spent_minutes,
+        retention_risk=retention_risk,
+        current_duration=current_duration,
+    )
+
+    # -----------------------------------------------------
+    # Generate learning analytics
+    # -----------------------------------------------------
+
+    analytics_report = analytics.generate_insights(
+        mastery=0.65,
+        confidence=confidence,
+        retention_risk=retention_risk,
+        session_accuracies=[
+            0.55,
+            0.60,
+            0.65,
+            0.70,
+        ],
+    )
+
+    # -----------------------------------------------------
+    # Return unified learning intelligence
+    # -----------------------------------------------------
+
+    return {
+        "demo": "CogniPlan Adaptive Learning Cycle",
+        "student_session": {
+            "questions_attempted": questions_attempted,
+            "correct_answers": correct_answers,
+            "confidence": confidence,
+            "time_spent_minutes": time_spent_minutes,
+        },
+        "evaluation": evaluation,
+        "analytics": analytics_report,
+        "next_action": evaluation[
+            "adaptation"
+        ]["action"],
+        "learning_loop": [
+            "PLAN",
+            "STUDY",
+            "EVALUATE",
+            "ADAPT",
+            "REPLAN",
+        ],
+    }
     return {
         "status": "success",
         "tutor_response": result,
