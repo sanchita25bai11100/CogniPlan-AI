@@ -1,3 +1,6 @@
+<p align="center">
+  <img src="assets/cogniplan-banner.svg" alt="CogniPlan AI Banner">
+</p>
 # 🧠 CogniPlan AI
 
 ### Adaptive Agentic Learning System
