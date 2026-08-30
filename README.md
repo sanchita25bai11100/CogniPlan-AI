@@ -6,7 +6,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.11+-blue?logo=python)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-API-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
-[![CI](https://github.com/sanchita25bai11100/CogniPlan-AI/actions/workflows/ci.yml/badge.svg)](https://github.com/sanchita25bai11100/CogniPlan-AI/actions)
+[![CogniPlan CI](https://github.com/sanchita25bai11100/CogniPlan-AI/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sanchita25bai11100/CogniPlan-AI/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ---
